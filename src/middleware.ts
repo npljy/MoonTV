@@ -15,13 +15,8 @@ export async function middleware(request: NextRequest) {
   const storageType = process.env.NEXT_PUBLIC_STORAGE_TYPE || 'localstorage';
 
   if (!process.env.PASSWORD) {
-    // 使用了edgeone加速，当前域名不是worker配置的域名
-    let reqUrl = request.url
     // 如果没有设置密码，重定向到警告页面
-    if (typeof window !== 'undefined') {
-      reqUrl = window.location.origin
-    }
-    const warningUrl = new URL('/warning', reqUrl);
+    const warningUrl = new URL('/warning', request.url);
     return NextResponse.redirect(warningUrl);
   }
 
@@ -111,14 +106,9 @@ function handleAuthFailure(
   if (pathname.startsWith('/api')) {
     return new NextResponse('Unauthorized', { status: 401 });
   }
-  // 使用了edgeone加速，当前域名不是worker配置的域名
-    let reqUrl = request.url
-    // 如果没有设置密码，重定向到警告页面
-    if (typeof window !== 'undefined') {
-      reqUrl = window.location.origin
-    }
+
   // 否则重定向到登录页面
-  const loginUrl = new URL('/login', reqUrl);
+  const loginUrl = new URL('/login', request.url);
   // 保留完整的URL，包括查询参数
   const fullUrl = `${pathname}${request.nextUrl.search}`;
   loginUrl.searchParams.set('redirect', fullUrl);
