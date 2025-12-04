@@ -16,8 +16,11 @@ export async function middleware(request: NextRequest) {
 
   if (!process.env.PASSWORD) {
     // 如果没有设置密码，重定向到警告页面
-    const locationUrl = location.origin || request.url
-    const warningUrl = new URL('/warning', locationUrl);
+    let reqUrl = request.url
+    if (typeof window !== 'undefined') {
+      reqUrl = window.location.origin
+    }
+    const warningUrl = new URL('/warning', reqUrl);
     return NextResponse.redirect(warningUrl);
   }
 
