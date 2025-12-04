@@ -107,8 +107,15 @@ function handleAuthFailure(
     return new NextResponse('Unauthorized', { status: 401 });
   }
 
+   const forwardedHost = request.headers.get('X-Forwarded-Host');
+
+   const url = new URL(request.url);
+   if (forwardedHost) {
+     url.hostname = forwardedHost
+   }
+  
   // 否则重定向到登录页面
-  const loginUrl = new URL('/login', request.url);
+  const loginUrl = new URL('/login', url.toString());
   // 保留完整的URL，包括查询参数
   const fullUrl = `${pathname}${request.nextUrl.search}`;
   loginUrl.searchParams.set('redirect', fullUrl);
