@@ -15,8 +15,9 @@ export async function middleware(request: NextRequest) {
   const storageType = process.env.NEXT_PUBLIC_STORAGE_TYPE || 'localstorage';
 
   if (!process.env.PASSWORD) {
-    // 如果没有设置密码，重定向到警告页面
+    // 使用了edgeone加速，当前域名不是worker配置的域名
     let reqUrl = request.url
+    // 如果没有设置密码，重定向到警告页面
     if (typeof window !== 'undefined') {
       reqUrl = window.location.origin
     }
